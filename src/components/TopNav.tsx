@@ -44,18 +44,20 @@ interface NavProps {
 
 function MobileNav({ navItems }: NavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const debouncedMenuToggle = debounce(()=>setIsMenuOpen(prev=>!prev),50)
 
   const menuRef = useRef<HTMLUListElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const handleKeyDown = debounce((e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      setIsMenuOpen((prev) => !prev);
+      e.preventDefault();
+      debouncedMenuToggle();
     }
     if (e.key === 'Escape') {
       setIsMenuOpen(false); // Close the menu when Escape is pressed
     }
-  })
+  }
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -78,11 +80,11 @@ function MobileNav({ navItems }: NavProps) {
     <div>
       <button
         ref={buttonRef}
-        onMouseEnter={() => setIsMenuOpen(true)}
-        onKeyDown={(e)=>handleKeyDown(e)}
+        onClick={debouncedMenuToggle}
+        onKeyDown={handleKeyDown}
         aria-label="Toggle menu"
         aria-expanded={isMenuOpen ? 'true' : 'false'}
-        className="transition-all hover:scale-110 focus:scale-110"
+        className={`transition-all hover:scale-110 focus:scale-110  rounded ${isMenuOpen? `bg-amberWhite`:``}`}
       >
         <Image
           src="./hamburger-menu.svg"
@@ -94,13 +96,13 @@ function MobileNav({ navItems }: NavProps) {
       <ul
         ref={menuRef}
         className={`
-          flex flex-col gap-4 transition-all duration-300 ease-out h-0.5 -ml-4
+          flex flex-col gap-4 transition-all duration-300 ease-out h-0 -ml-4
           ${isMenuOpen
             ? 'translate-y-2'
             : '-rotate-90 scale-0'}
             `}
         aria-hidden={!isMenuOpen}
-        onMouseLeave={() => setIsMenuOpen(false)}
+        role='menu'
       >
         {...navItems.map((item) => (
           <li key={item.label}>
