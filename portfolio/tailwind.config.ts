@@ -11,6 +11,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        amberWhite: "#FEF3C7",
+        amberLight:"#FBBF24",
+        amberMedium:"#B45309",
+        amberDarker:"#78350F",
       },
     },
   },
